@@ -50,6 +50,7 @@ class App extends React.Component {
         showInput: false
       },
     };
+    localStorage.setItem('lists', this.state.lists);
     this.changeText = this.changeText.bind(this);
     this.addToDo = this.addToDo.bind(this);
     this.done = this.done.bind(this);
@@ -83,10 +84,12 @@ class App extends React.Component {
   }
 
   addToDo() {
-    this.setState({
-      lists: [...this.state.lists, this.state.addToDo],
-      addToDo: { ...this.state.addToDo, name: "" },
-    });
+    if (this.state.addToDo.name !== '') {
+      this.setState({
+        lists: [...this.state.lists, this.state.addToDo],
+        addToDo: { ...this.state.addToDo, name: "" },
+      });
+    }
   }
 
   done(id) {

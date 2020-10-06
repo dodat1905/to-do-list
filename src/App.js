@@ -105,7 +105,11 @@ class App extends React.Component {
   }
 
   destroy(id) {
-    const lists = this.state.lists.filter((item) => item.id !== id);
+    let lists = this.state.lists.filter((item) => item.id !== id);
+    lists = lists.map((item, index) => {
+      item.id = index + 1
+      return item;
+    });
     this.setState({
       lists: lists,
     });

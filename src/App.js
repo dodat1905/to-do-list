@@ -49,6 +49,7 @@ class App extends React.Component {
         done: false,
         showInput: false
       },
+      search: ''
     };
     localStorage.setItem('lists', this.state.lists);
     this.changeText = this.changeText.bind(this);
@@ -58,6 +59,7 @@ class App extends React.Component {
     this.showEdit = this.showEdit.bind(this);
     this.updateToDo = this.updateToDo.bind(this);
     this.hiddenInput = this.hiddenInput.bind(this);
+    this.searchList = this.searchList.bind(this);
   }
 
   changeText(event) {
@@ -90,6 +92,12 @@ class App extends React.Component {
         addToDo: { ...this.state.addToDo, name: "" },
       });
     }
+  }
+
+  searchList(event) {
+    this.setState({
+      search: event.target.value
+    });
   }
 
   done(id) {
@@ -138,13 +146,17 @@ class App extends React.Component {
   }
 
   render() {
-    const { lists, addToDo } = this.state;
+    const { lists, addToDo, search } = this.state;
     return (
       <div>
         <LoadCssJs />
-        <NewTodo addToDo={addToDo} newTodo={this.addToDo} changeText={this.changeText} />
+        <div id="myDIV" className="header">
+          <NewTodo addToDo={addToDo} newTodo={this.addToDo} changeText={this.changeText} />
+          <Search search={search} searchList={this.searchList} />
+        </div>
         <ul id="myUL">
-          <List lists={lists} done={this.done} destroy={this.destroy} showEdit={this.showEdit} hiddenInput={this.hiddenInput}
+          <List lists={lists} done={this.done} search={search}
+            destroy={this.destroy} showEdit={this.showEdit} hiddenInput={this.hiddenInput}
             updateToDo={this.updateToDo} />
         </ul>
       </div>
@@ -152,10 +164,19 @@ class App extends React.Component {
   }
 }
 
+const Search = (props) => {
+  const { search, searchList } = props;
+  return (
+    <div>
+      <input type="text" id="search" placeholder="Search" value={search} onChange={props.searchList} />
+    </div>
+  );
+}
+
 const NewTodo = (props) => {
   const { addToDo } = props;
   return (
-    <div id="myDIV" className="header">
+    <div>
       <h2>My To Do List</h2>
       <input type="text" id="myInput" placeholder="Title..." value={addToDo.name} onChange={props.changeText} />
       <span onClick={props.newTodo} className="addBtn">
@@ -166,7 +187,8 @@ const NewTodo = (props) => {
 };
 
 const List = (props) => {
-  const lists = props.lists.map((item) => {
+  const filterLists = props.lists.filter(item => props.search === '' || item.name.toLowerCase().includes(props.search.toLowerCase()));
+  const lists = filterLists.map((item) => {
     return (
       <li key={item.id} className={item.done ? "checked" : null}>
         <span onClick={() => props.done(item.id)}>

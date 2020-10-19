@@ -1,0 +1,42 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="example">
+  <div :style="{ fontSize: postFontSize + 'px'}">
+    <ul>
+      <blog-post v-for="item in posts" v-bind:key="item.id"
+        v-bind:post="item" v-on:enlarge-text="onLargeText" v-model="searchText">clcmm</blog-post>
+    </ul>
+  </div>
+</div>
+<script type="text/javascript">
+  Vue.component('blog-post', {
+    props: ['post', 'value'],
+    template: `
+      <div>
+        <li>{{ post.title }}</li>
+        <button v-on:click="$emit('enlarge-text', 5)">
+          Enlarge text
+        </button>
+        <slot></slot>
+        <input v-bind:value="value" v-on:input="$emit('input', $event.target.value)" />
+      </div>
+    `
+  })
+  var vm = new Vue({
+    el: '#example',
+    data: {
+      searchText: '',
+      posts: [
+        { id: 1, title: 'abc'},
+        { id: 2, title: 'def'},
+        { id: 3, title: 'ghi'}
+      ],
+      postFontSize: 30
+    },
+    methods: {
+      onLargeText: function(event) {
+        this.postFontSize += event
+      }
+    }
+  })
+</script>
